@@ -26,21 +26,7 @@ type Config struct {
 func main() {
 	kingpin.Parse()
 
-	usr, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
-	}
-	data, err := ioutil.ReadFile(usr.HomeDir + "/.goutrack")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	config := Config{}
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
-
+	config := readConfigFromFile()
 	if *login != "" {
 		config.Username = *login
 	}
@@ -58,4 +44,25 @@ func main() {
 		fmt.Println("Applying", *commandString, "to", *story)
 		fmt.Println(client.CommandIssue(*story, *commandString))
 	}
+}
+
+func readConfigFromFile() Config {
+	usr, err := user.Current()
+	if err != nil {
+		log.Println(err)
+		return Config{}
+	}
+	data, err := ioutil.ReadFile(usr.HomeDir + "/.goutrack")
+	if err != nil {
+		log.Println(err)
+		return Config{}
+	}
+
+	config := Config{}
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Printf("error: %v", err)
+		return Config{}
+	}
+	return config
 }
