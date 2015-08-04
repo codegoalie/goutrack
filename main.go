@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
+	"os/user"
 
 	"gopkg.in/alecthomas/kingpin.v2"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -14,9 +18,37 @@ var (
 	commandString = kingpin.Arg("commandString", "command string to apply to story").String()
 )
 
+type Config struct {
+	Username string
+	Password string
+}
+
 func main() {
 	kingpin.Parse()
-	client := NewYouTrackClient(*login, *password)
+
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+	}
+	data, err := ioutil.ReadFile(usr.HomeDir + "/.goutrack")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	config := Config{}
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+
+	if *login != "" {
+		config.Username = *login
+	}
+	if *password != "" {
+		config.Username = *password
+	}
+
+	client := NewYouTrackClient(config.Username, config.Password)
 
 	switch *command {
 	case "g":
