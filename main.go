@@ -15,7 +15,8 @@ var (
 	password      = kingpin.Flag("password", "password for YouTrack").Short('p').String()
 	command       = kingpin.Arg("command", "action to perform on YouTrack").Required().String()
 	story         = kingpin.Arg("story", "YouTrack story ID").Required().String()
-	commandString = kingpin.Arg("commandString", "command string to apply to story").String()
+	commandString = kingpin.Arg("commandString", "command string to apply to the story").String()
+	commentString = kingpin.Arg("commentString", "add a comment to the story").String()
 )
 
 type Config struct {
@@ -42,7 +43,7 @@ func main() {
 		fmt.Println(client.GetIssue(*story))
 	case "c":
 		fmt.Println("Applying", *commandString, "to", *story)
-		fmt.Println(client.CommandIssue(*story, *commandString))
+		fmt.Println(client.CommandIssue(*story, *commandString, *commentString))
 	}
 }
 

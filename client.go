@@ -48,8 +48,15 @@ func (c *YouTrackClient) GetIssue(id string) (string, error) {
 	return body, nil
 }
 
-func (client *YouTrackClient) CommandIssue(id, command string) (string, error) {
+func (client *YouTrackClient) CommandIssue(id, command, comment string) (string, error) {
 	url := baseUrl + "issue/" + id + "/execute"
+
+	var params = make(map[string]string)
+
+	params["command"] = command
+	if comment != "" {
+		params["comment"] = comment
+	}
 
 	res, err := httpclient.WithCookie(&http.Cookie{
 		Name:  sessionKey,
@@ -57,8 +64,7 @@ func (client *YouTrackClient) CommandIssue(id, command string) (string, error) {
 	}).WithCookie(&http.Cookie{
 		Name:  principalKey,
 		Value: client.Principal,
-	}).Post(url, map[string]string{
-		"command": command})
+	}).Post(url, params)
 
 	if err != nil {
 		return "", err
