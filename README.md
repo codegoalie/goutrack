@@ -6,10 +6,11 @@ GouTrack is a command line interface for the YouTrack project management system.
 
 ## Install
 
-Download one of the [pre-built binaries]() for your operating system and place
-it in your PATH. If your OS does not have a pre-built binary, please open an
-issue and I will make a binary for you, or follow the steps below to install
-from source.
+Download one of the [pre-built
+binaries](https://github.com/chrismar035/goutrack/releases/latest) for your
+operating system and place it in your PATH. If your OS does not have a
+pre-built binary, please open an issue and I will make a binary for you, or
+follow the steps below to install from source.
 
 Alternatively to the pre-built binaries, you can install from source by
 go-getting:
