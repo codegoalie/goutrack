@@ -7,18 +7,18 @@ import (
 	"github.com/ddliu/go-httpclient"
 )
 
-const baseUrl = "https://youtrack.mobiledefense.com/rest/"
 const sessionKey = "YTSESSIONID"
 const principalKey = "jetbrains.charisma.main.security.PRINCIPAL"
 
 type YouTrackClient struct {
+	BaseUrl   string
 	Session   string
 	Principal string
 	Expires   time.Time
 }
 
-func NewYouTrackClient(login, password string) YouTrackClient {
-	var client YouTrackClient
+func NewYouTrackClient(host, login, password string) YouTrackClient {
+	client := YouTrackClient{BaseUrl: host + "/rest/"}
 
 	client.login(login, password)
 
@@ -32,7 +32,7 @@ func (c *YouTrackClient) GetIssue(id string) (string, error) {
 	}).WithCookie(&http.Cookie{
 		Name:  principalKey,
 		Value: c.Principal,
-	}).Get(baseUrl+"issue/"+id, nil)
+	}).Get(c.BaseUrl+"issue/"+id, nil)
 
 	if err != nil {
 		return "", err
@@ -49,7 +49,7 @@ func (c *YouTrackClient) GetIssue(id string) (string, error) {
 }
 
 func (client *YouTrackClient) CommandIssue(id, command, comment string) (string, error) {
-	url := baseUrl + "issue/" + id + "/execute"
+	url := client.BaseUrl + "issue/" + id + "/execute"
 
 	var params = make(map[string]string)
 
@@ -82,7 +82,7 @@ func (client *YouTrackClient) CommandIssue(id, command, comment string) (string,
 }
 
 func (client *YouTrackClient) login(login, password string) error {
-	res, err := httpclient.Post(baseUrl+"user/login", map[string]string{
+	res, err := httpclient.Post(client.BaseUrl+"user/login", map[string]string{
 		"login":    login,
 		"password": password,
 	})

@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	host          = kingpin.Flag("host", "URL for YouTrack installation").Short('h').String()
 	login         = kingpin.Flag("login", "login for YouTrack").Short('l').String()
 	password      = kingpin.Flag("password", "password for YouTrack").Short('p').String()
 	command       = kingpin.Arg("command", "action to perform on YouTrack").Required().String()
@@ -20,6 +21,7 @@ var (
 )
 
 type Config struct {
+	Host     string
 	Username string
 	Password string
 }
@@ -34,8 +36,11 @@ func main() {
 	if *password != "" {
 		config.Username = *password
 	}
+	if *host != "" {
+		config.Host = *host
+	}
 
-	client := NewYouTrackClient(config.Username, config.Password)
+	client := NewYouTrackClient(config.Host, config.Username, config.Password)
 
 	switch *command {
 	case "g":
