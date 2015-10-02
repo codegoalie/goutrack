@@ -2,7 +2,8 @@
 
 [![baby-gopher](https://raw.githubusercontent.com/drnic/babygopher-site/gh-pages/images/babygopher-badge.png)](http://www.babygopher.org)
 
-GouTrack is a command line interface for the YouTrack project management system.
+GouTrack (pronounced _goo-trak_) is a command line interface for the YouTrack
+project management system.
 
 ## Install
 
