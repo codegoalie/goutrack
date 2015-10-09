@@ -92,6 +92,31 @@ $ goutrack c yt-1234 "Assignee me" "I'll take this story."
 $ goutrack c yt-4321 "Subsystem server-side"
 ```
 
+## Aliases
+
+GouTrack has aliases which can shorten frequently used commands. Simply define
+a set of aliases in your config file and use the `a` sub-command to expand the
+alias.
+
+```
+# ~/.goutrack
+
+...
+aliases:
+  - name: complete
+    command: "State: Complete"
+  - name: mine
+    command: "Assigned to : me"
+```
+
+Then, you can simply specify the alias as the command (with an optional comment
+string).
+
+```
+$ goutrack a c-1234 complete
+Applying State: Complete to c-1234
+```
+
 ## Contributing
 
 When contributing please
