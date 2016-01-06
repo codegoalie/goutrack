@@ -103,10 +103,8 @@ alias.
 
 ...
 aliases:
-  - name: complete
-    command: "State: Complete"
-  - name: mine
-    command: "Assigned to : me"
+  complete: "State: Complete"
+  mine: "Assigned to: me"
 ```
 
 Then, you can simply specify the alias as the command (with an optional comment

@@ -24,12 +24,7 @@ type Config struct {
 	Host     string
 	Username string
 	Password string
-	Aliases  []Alias
-}
-
-type Alias struct {
-	Name    string
-	Command string
+	Aliases  map[string]string
 }
 
 func main() {
@@ -67,13 +62,7 @@ func main() {
 }
 
 func (config Config) getCommandFromAlias(name string) string {
-	for _, alias := range config.Aliases {
-		if alias.Name == name {
-			return alias.Command
-		}
-	}
-
-	return ""
+	return config.Aliases[name]
 }
 
 func readConfigFromFile() Config {
