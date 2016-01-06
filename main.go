@@ -24,6 +24,7 @@ type Config struct {
 	Host     string
 	Username string
 	Password string
+	Aliases  map[string]string
 }
 
 func main() {
@@ -49,7 +50,19 @@ func main() {
 	case "c":
 		fmt.Println("Applying", *commandString, "to", *story)
 		fmt.Println(client.CommandIssue(*story, *commandString, *commentString))
+	case "a":
+		command := config.getCommandFromAlias(*commandString)
+		if command != "" {
+			fmt.Println("Applying", command, "to", *story)
+			fmt.Println(client.CommandIssue(*story, command, *commentString))
+		} else {
+			fmt.Println("Alias:", *commandString, "not found")
+		}
 	}
+}
+
+func (config Config) getCommandFromAlias(name string) string {
+	return config.Aliases[name]
 }
 
 func readConfigFromFile() Config {
