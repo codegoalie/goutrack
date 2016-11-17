@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"net/http"
@@ -10,35 +10,43 @@ import (
 const sessionKey = "YTSESSIONID"
 const principalKey = "jetbrains.charisma.main.security.PRINCIPAL"
 
+// YouTrackClient is used to interact with YouTrack API at BaseURL
 type YouTrackClient struct {
-	BaseUrl   string
+	BaseURL   string
 	Session   string
 	Principal string
 	Expires   time.Time
 }
 
+// NewYouTrackClient returns an authenticated YouTrackClinet at host using the
+// provided login and password
 func NewYouTrackClient(host, login, password string) YouTrackClient {
-	client := YouTrackClient{BaseUrl: host + "/rest/"}
+	client := YouTrackClient{BaseURL: host + "/rest/"}
 
-	client.login(login, password)
+	err := client.login(login, password)
+	if err != nil {
+		panic(err)
+	}
 
 	return client
 }
 
-func (c *YouTrackClient) GetIssue(id string) (string, error) {
+// GetIssue returns the string representation of a YouTrack issue
+// Note: this string will contain XML
+func (client *YouTrackClient) GetIssue(id string) (string, error) {
 	res, err := httpclient.WithCookie(&http.Cookie{
 		Name:  sessionKey,
-		Value: c.Session,
+		Value: client.Session,
 	}).WithCookie(&http.Cookie{
 		Name:  principalKey,
-		Value: c.Principal,
-	}).Get(c.BaseUrl+"issue/"+id, nil)
+		Value: client.Principal,
+	}).Get(client.BaseURL+"issue/"+id, nil)
 
 	if err != nil {
 		return "", err
 	}
 
-	c.setCredsFromCookies(res.Cookies())
+	client.setCredsFromCookies(res.Cookies())
 
 	body, err := res.ToString()
 	if err != nil {
@@ -48,8 +56,10 @@ func (c *YouTrackClient) GetIssue(id string) (string, error) {
 	return body, nil
 }
 
+// CommandIssue will apply command onto the issue denoted by id while optionally
+// adding a comment of comment, if not empty.
 func (client *YouTrackClient) CommandIssue(id, command, comment string) (string, error) {
-	url := client.BaseUrl + "issue/" + id + "/execute"
+	url := client.BaseURL + "issue/" + id + "/execute"
 
 	var params = make(map[string]string)
 
@@ -82,7 +92,7 @@ func (client *YouTrackClient) CommandIssue(id, command, comment string) (string,
 }
 
 func (client *YouTrackClient) login(login, password string) error {
-	res, err := httpclient.Post(client.BaseUrl+"user/login", map[string]string{
+	res, err := httpclient.Post(client.BaseURL+"user/login", map[string]string{
 		"login":    login,
 		"password": password,
 	})
